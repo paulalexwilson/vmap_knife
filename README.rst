@@ -2,24 +2,27 @@
 VMAP Knife
 ==========
 
+Takes a CSV export of a Charles session and VMAP document and produces a report showing
+which ad breaks triggered which external calls. The project is designed to reduce the 
+amount of time required to validate VMAP / VAST player behaviour. 
+
+Usage
+-----
+
+Requires:
+ - Python 3.8
+ - pip3
+
+Steps:
+ - Install pip3 
+ - Run `pip3 install virtualenv`
+ - Run `virtualenv venv`
+ - Run `. venv/bin/activate`
+ - Run `pip3 install --editable .`
+ - Run `vmap_knife --csvfile input.csv --vmapfile input.xml --outputfile report.html`
 
 
+ Developer Notes
+ ---------------
 
-
-
-Parses a VMAP document and HAR trace and generates a client behaviour report
-
-
-
-Features
---------
-
-* TODO
-
-Credits
--------
-
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+ 

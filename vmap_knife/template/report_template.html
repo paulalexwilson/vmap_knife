@@ -6,9 +6,9 @@
     </title>
     <style type="text/css">
         .test-result-table {
-
+            table-layout: fixed;
             border: 1px solid black;
-            width: 800px;
+            width: 80%;
         }
 
         .test-result-table-header-cell {
@@ -19,7 +19,7 @@
         }
 
         .test-result-step-command-cell {
-
+            width: 50px;
             border-bottom: 1px solid gray;
         }
 
@@ -29,8 +29,13 @@
         }
 
 
-        .test-result-step-description-cell {
+        .test-result-step-url-cell {
+            word-wrap: break-word;
+            border-bottom: 1px solid gray;
+        }
 
+        .test-result-step-status-cell {
+            width: 80px;
             border-bottom: 1px solid gray;
         }
 
@@ -82,6 +87,12 @@
     {% for adbreakreport in report.adBreakReports %}
     <h2>Break Id: {{ adbreakreport.adBreakId }}</h2>
     <table class="test-result-table" cellspacing="0">
+
+        <colgroup>
+            <col span="1" style="width: 7%;">
+            <col span="1" style="width: 90%;">
+            <col span="1" style="width: 3%;">
+        </colgroup>
         <thead>
             <tr>
                 <td class="test-result-table-header-cell">
@@ -91,10 +102,11 @@
                     URL
                 </td>
                 <td class="test-result-table-header-cell">
-                    Response Code
+                    Code
                 </td>
             </tr>
         </thead>
+
         <tbody>
             {% for adreport in adbreakreport.adReports %}
             <tr class="test-result-step-row test-result-comment-row">
@@ -104,88 +116,116 @@
                     [{{ 'WRAPPER' if adreport.is_wrapper else 'INLINE'}}]
                 </td>
             </tr>
-            {% if adreport.impression %}
+
+            {% if adreport.vast_ad_tag.requests|length == 0 %}
             <tr class="test-result-step-row test-result-step-row-altone">
-                {% if adreport.impression.requests|length == 0 %}
                 <td class="test-result-step-command-cell">
-                    impression
+                    vast ad tag
                 </td>
-                {% else %}
-                <td class="test-result-step-command-cell">
-                    <!-- rowspan="{{adreport.impression.requests|length}}"> -->
-                    impression
-                </td>
-                {% endif %}
-                {% if adreport.impression.requests|length == 0 %}
                 <td class="test-result-step-command-cell-notfired" colspan="2">
 
                 </td>
-                {% else %}
-                {% for request in adreport.impression.requests %}
-                <td class="test-result-step-description-cell">
+            </tr>
+            {% else %}
+            {% for request in adreport.vast_ad_tag.requests %}
+            <tr class="test-result-step-row test-result-step-row-altone">
+                {% if loop.index == 1 %}
+                <td class="test-result-step-command-cell" rowspan="{{adreport.vast_ad_tag.requests|length}}">
+                    vast ad tag
+                </td>
+                {% endif %}
+                <td class="test-result-step-url-cell">
                     {{request.url}}
                 </td>
-                <td class="test-result-step-description-cell">
+                <td class="test-result-step-status-cell">
                     {{request.response_code}}
                 </td>
-                {% endfor %}
-                {% endif %}
             </tr>
+            {% endfor %}
             {% endif %}
-            {% if adreport.error %}
+
+            {% if adreport.impression.requests|length == 0 %}
             <tr class="test-result-step-row test-result-step-row-altone">
-                {% if adreport.error.requests|length == 0 %}
                 <td class="test-result-step-command-cell">
-                    error
+                    impression
                 </td>
-                {% else %}
-                <td class="test-result-step-command-cell">
-                    <!-- rowspan="{{adreport.error.requests|length}}"> -->
-                    error
-                </td>
-                {% endif %}
-                {% if adreport.error.requests|length == 0 %}
                 <td class="test-result-step-command-cell-notfired" colspan="2">
 
                 </td>
-                {% else %}
-                {% for request in adreport.error.requests %}
-                <td class="test-result-step-description-cell">
+            </tr>
+            {% else %}
+            {% for request in adreport.impression.requests %}
+            <tr class="test-result-step-row test-result-step-row-altone">
+                {% if loop.index == 1 %}
+                <td class="test-result-step-command-cell" rowspan="{{adreport.impression.requests|length}}">
+                    impression
+                </td>
+                {% endif %}
+                <td class="test-result-step-url-cell">
                     {{request.url}}
                 </td>
-                <td class="test-result-step-description-cell">
+                <td class="test-result-step-status-cell">
                     {{request.response_code}}
                 </td>
-                {% endfor %}
-                {% endif %}
             </tr>
+            {% endfor %}
             {% endif %}
+
+            {% if adreport.error.requests|length == 0 %}
+            <tr class="test-result-step-row test-result-step-row-altone">
+                <td class="test-result-step-command-cell"">
+                    error
+                </td>
+                <td class=" test-result-step-command-cell-notfired" colspan="2">
+
+                </td>
+            </tr>
+            {% else %}
+            {% for request in adreport.error.requests %}
+            <tr class="test-result-step-row test-result-step-row-altone">
+                {% if loop.index == 1 %}
+                <td class="test-result-step-command-cell" rowspan="{{adreport.error.requests|length}}">
+                    error
+                </td>
+                {% endif %}
+                <td class="test-result-step-url-cell">
+                    {{request.url}}
+                </td>
+                <td class="test-result-step-status-cell">
+                    {{request.response_code}}
+                </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+
             {% for tracking_event, tracking_results in adreport.tracking_calls.items() %}
+            {% if tracking_results.requests|length == 0 %}
             <tr class="test-result-step-row test-result-step-row-altone">
-                {% if tracking_results.requests|length == 0 %}
-                <td class="test-result-step-command-cell">
+                <td class="test-result-step-command-cell"">
                     {{tracking_event}}
                 </td>
-                {% else %}
+                <td class=" test-result-step-command-cell-notfired" colspan="2">
+
+                </td>
+            </tr>
+            {% else %}
+            {% for request in tracking_results.requests %}
+            <tr class="test-result-step-row test-result-step-row-altone">
+                {% if loop.index == 1 %}
                 <td class="test-result-step-command-cell" rowspan="{{tracking_results.requests|length}}">
                     {{tracking_event}}
                 </td>
                 {% endif %}
-                {% if tracking_results.requests|length == 0 %}
-                <td class="test-result-step-command-cell-notfired" colspan="2">
-
-                </td>
-                {% else %}
-                {% for request in tracking_results.requests %}
-                <td class="test-result-step-description-cell">
+                <td class="test-result-step-url-cell">
                     {{request.url}}
                 </td>
-                <td class="test-result-step-description-cell">
+                <td class="test-result-step-status-cell">
                     {{request.response_code}}
                 </td>
-                {% endfor %}
-                {% endif %}
             </tr>
+            {% endfor %}
+            {% endif %}
+
             {% endfor %}
 
             {% endfor %}

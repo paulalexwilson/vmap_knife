@@ -18,6 +18,7 @@ class Ad:
     is_wrapper: bool
     sequence: Optional[int]
     title: str
+    vast_ad_tag: Optional[str]
     error: Optional[str]
     impression: Optional[str]
     trackingEvents: Dict
@@ -99,14 +100,15 @@ def parseAds(adbreak_element: Element) -> List[Ad]:
             impression = inlineElement.find('Impression').text
             trackingEvents = _parseTrackingEvents(inlineElement)
             ads.append(Ad(adId=adId, is_wrapper=False, sequence=sequence, title=title,
-                          error=error_beacon,
+                          error=error_beacon, vast_ad_tag=None,
                           impression=impression, trackingEvents=trackingEvents, mediaFiles=[]))
         else:
+            vast_ad_tag = wrapperElement.find('VASTAdTagURI').text
             error_beacon = wrapperElement.find('Error').text
             impression = wrapperElement.find('Impression').text
             trackingEvents = _parseTrackingEvents(wrapperElement)
             ads.append(Ad(adId=adId, is_wrapper=True, sequence=sequence, title=None,
-                          error=error_beacon,
+                          error=error_beacon, vast_ad_tag=vast_ad_tag,
                           impression=impression, trackingEvents=trackingEvents, mediaFiles=[]))
     return ads
 

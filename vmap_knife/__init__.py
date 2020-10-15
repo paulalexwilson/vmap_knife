@@ -6,7 +6,6 @@ __version__ = '0.1.0'
 
 
 from .trace import Trace, Request
-from .har import parse_har
 from .vmap import parse_vmap, Vmap, Ad, AdBreak
 from .csv import parse_csv
 from .processor import process_trace_report, TraceReport

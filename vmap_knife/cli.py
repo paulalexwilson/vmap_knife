@@ -5,9 +5,9 @@ from vmap_knife import generate_report, process_trace_report, parse_vmap, parse_
 
 
 @click.command()
-@click.option('--csvfile')
-@click.option('--vmapfile')
-@click.option('--outputfile', default='report.html')
+@click.option('--csvfile', required=True, help='Path to the CSV file')
+@click.option('--vmapfile', required=True, help='Path to the VMAP file')
+@click.option('--outputfile', default='report.html', help='Path to store the output HTML report')
 def main(csvfile, vmapfile, outputfile):
     click.echo(
         f"Generating report from CSV [{csvfile}], VMAP [{vmapfile}] to location [{outputfile}]")

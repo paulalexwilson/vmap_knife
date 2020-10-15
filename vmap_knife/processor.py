@@ -9,12 +9,17 @@ import re
 
 
 class HttpCall:
+    """
+    Represents a collection of HTTP requests.
+    """
+
     def __init__(self, requests: List[Request]):
         self.requests = requests
 
 
 class AdReport:
     """
+    A report summary for a single ad within an ad break.
     """
 
     def __init__(self, ad: Ad, trace: Trace):
@@ -28,6 +33,7 @@ class AdReport:
         self.is_wrapper = self._ad.is_wrapper
         self.impression = self._check_url_fired(self._ad.impression)
         self.error = self._check_error_fired(self._ad.error)
+        self.vast_ad_tag = self._check_url_fired(self._ad.vast_ad_tag)
         self.tracking_calls = {}
         for trackingEvent, trackingUrl in self._ad.trackingEvents.items():
             tracedTrackingUrls = self._trace.requestForUrl(
@@ -37,6 +43,8 @@ class AdReport:
         self.media_file_calls = []
 
     def _check_url_fired(self, url: str) -> HttpCall:
+        if url is None:
+            return HttpCall([])
         tracedTrackingUrls = self._trace.requestForUrl(re.escape(url), True)
         return HttpCall(tracedTrackingUrls)
 
